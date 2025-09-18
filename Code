@@ -1,0 +1,50 @@
+code
+#define LED   12
+#define DELAY 80
+
+const char* MESSAGE = "hello world";
+
+const char* CODE[26] = {
+  ".-", "-...", "-.-.", "-..", ".", "..-.", "--.", "....", "..", ".---",
+  "-.-", ".-..", "--", "-.", "---", ".--.", "--.-", ".-.", "...", "-",
+  "..-", "...-", ".--", "-..-", "-.--", "--.."
+};
+
+void setup() {
+  pinMode(LED, OUTPUT);
+  Serial.begin(9600);              // Start serial communication
+  Serial.println("Blinking Morse Code:");
+  Serial.println(MESSAGE);        // Print the message
+}
+
+void playSymbol(char symbol) {
+  if (symbol == '.') {
+    digitalWrite(LED, HIGH);
+    delay(DELAY);
+  } else if (symbol == '-') {
+    digitalWrite(LED, HIGH);
+    delay(3 * DELAY);
+  }
+  digitalWrite(LED, LOW);
+  delay(DELAY);  // Inter-symbol delay
+}
+
+void blinkMorse(const char* msg) {
+  for (int i = 0; msg[i] != '\0'; i++) {
+    char c = msg[i];
+    if (c >= 'a' && c <= 'z') {
+      const char* morse = CODE[c - 'a'];
+      for (int j = 0; morse[j] != '\0'; j++) {
+        playSymbol(morse[j]);
+      }
+      delay(2 * DELAY);  // Inter-letter delay
+    } else if (c == ' ') {
+      delay(4 * DELAY);  // Inter-word delay
+    }
+  }
+}
+
+void loop() {
+  blinkMorse(MESSAGE);
+  while (true);  // Stop after one run
+}
